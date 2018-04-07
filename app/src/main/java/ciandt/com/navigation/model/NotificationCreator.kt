@@ -23,7 +23,8 @@ class NotificationCreator {
     fun createTriggerNotification(context: Context): Notification {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) createNotificationChannel(context)
         return NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_my_location_black_48dp)
+//                .setSmallIcon(R.drawable.ic_my_location_black_48dp)
+                .setSmallIcon(R.drawable.ic_directions_black_48dp)
                 .setContentTitle("Proximity App")
                 .setContentText("You are in the beacons range! Click here to run our app!")
                 .setContentIntent(PendingIntent.getActivity(context, 234235, Intent(context, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT))
@@ -33,7 +34,8 @@ class NotificationCreator {
     fun createNotification(context: Context): Notification {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) createNotificationChannel(context)
         return NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_my_location_black_48dp)
+//                .setSmallIcon(R.drawable.ic_my_location_black_48dp)
+                .setSmallIcon(R.drawable.ic_directions_black_48dp)
                 .setContentTitle("Estimote Inc. \u00AE")
                 .setContentText("Scan is running...")
                 .build()

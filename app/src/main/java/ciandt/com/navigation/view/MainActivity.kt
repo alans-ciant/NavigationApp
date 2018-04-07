@@ -11,8 +11,8 @@ import android.widget.Toast
 import ciandt.com.navigation.BuildConfig
 import ciandt.com.navigation.R
 import ciandt.com.navigation.model.NotificationCreator
-import com.estimote.cloud_plugin.common.EstimoteCloudCredentials
 import com.estimote.coresdk.common.config.EstimoteSDK
+import com.estimote.proximity_sdk.proximity.EstimoteCloudCredentials
 import com.estimote.proximity_sdk.proximity.ProximityObserver
 import com.estimote.proximity_sdk.proximity.ProximityObserverBuilder
 import com.estimote.proximity_sdk.trigger.ProximityTriggerBuilder
@@ -25,10 +25,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var notification: Notification
     private lateinit var proximityObserver: ProximityObserver
     private var proximityObservationHandler: ProximityObserver.Handler? = null
-    private val cloudCredentials = EstimoteCloudCredentials(BuildConfig.ESTIMOTE_APP_ID,
-            BuildConfig.ESTIMOTE_APP_TOKEN)
+    private val cloudCredentials = EstimoteCloudCredentials(BuildConfig.ESTIMOTE_APP_ID_DEBUG, BuildConfig.ESTIMOTE_APP_TOKEN_DEBUG)
     // Estimote proximity end
-
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
