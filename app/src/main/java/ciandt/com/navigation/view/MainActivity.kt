@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // Estimote ini
-        EstimoteSDK.initialize(applicationContext, BuildConfig.ESTIMOTE_APP_ID, BuildConfig.ESTIMOTE_APP_TOKEN)
+        EstimoteSDK.initialize(applicationContext, BuildConfig.ESTIMOTE_APP_ID_DEBUG, BuildConfig.ESTIMOTE_APP_TOKEN_DEBUG)
         EstimoteSDK.enableDebugLogging(true)
         // Estimote end
 
