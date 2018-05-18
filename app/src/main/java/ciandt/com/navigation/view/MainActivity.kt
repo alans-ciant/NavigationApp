@@ -18,6 +18,7 @@ import ciandt.com.navigation.view.main.BeaconAdapter
 import ciandt.com.navigation.view.main.BeaconAdapter.ItemClickListener
 import com.estimote.coresdk.common.config.EstimoteSDK
 import com.estimote.proximity_sdk.proximity.EstimoteCloudCredentials
+import com.estimote.proximity_sdk.proximity.ProximityAttachment
 import com.estimote.proximity_sdk.proximity.ProximityObserver
 import com.estimote.proximity_sdk.proximity.ProximityObserverBuilder
 import com.estimote.proximity_sdk.trigger.ProximityTriggerBuilder
@@ -25,6 +26,13 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.main_beacon_rv.*
 
 class MainActivity : AppCompatActivity() {
+
+    // Estimote Attachment keys ini
+    val AKEY_BUILDING = "building"
+    val AKEY_FLOOR = "floor"
+    val AKEY_VENUE = "venue"
+    val AKEY_text = "text"
+    // Estimote Attachment keys end
 
     // Estimote proximity ini
     private lateinit var notification: Notification
@@ -54,6 +62,18 @@ class MainActivity : AppCompatActivity() {
         false
     }
 
+    // Estimote actions ini
+    private val makeOnEnterAction: (ProximityAttachment) -> Unit = {
+        // TODO -- concrete action
+        Toast.makeText(this, "Enter action: " + it.getPayload(), Toast.LENGTH_SHORT).show()
+    }
+
+    private val makeOnExitAction: (ProximityAttachment) -> Unit = {
+        // TODO -- concrete action
+        Toast.makeText(this, "Enter action: " + it.getPayload(), Toast.LENGTH_SHORT).show()
+    }
+    // Estimote actions end
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -75,8 +95,35 @@ class MainActivity : AppCompatActivity() {
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
+        // Estimote zones ini
+        // Recepção
+        val receptionRoomZone = proximityObserver.zoneBuilder()
+                .forAttachmentKeyAndValue("venue", "office")
+                .inCustomRange(5.0)
+                .withOnEnterAction(makeOnEnterAction)
+                .withOnExitAction(makeOnExitAction)
+                .create()
+
+        // Alameda
+        val mallZone = proximityObserver.zoneBuilder()
+                .forAttachmentKeyAndValue("venue", "office")
+                .inCustomRange(5.0)
+                .withOnEnterAction(makeOnEnterAction)
+                .withOnExitAction(makeOnExitAction)
+                .create()
+
+        // Garage
+        val garageZone = proximityObserver.zoneBuilder()
+                .forAttachmentKeyAndValue("venue", "office")
+                .inCustomRange(5.0)
+                .withOnEnterAction(makeOnEnterAction)
+                .withOnExitAction(makeOnExitAction)
+                .create()
+        // Estimote zones end
+
         proximityObservationHandler = proximityObserver
-                //.addProximityZones(venueZone, mintDeskZone, blueberryDeskZone)
+                // Adding the Estimote zones...
+                .addProximityZones(receptionRoomZone, mallZone, garageZone)
                 .start()
     }
 
@@ -118,3 +165,7 @@ class MainActivity : AppCompatActivity() {
                         Toast.makeText(this, "Trigger disabled.", Toast.LENGTH_SHORT).show()
                     }).create()
 }
+
+
+// TODO -- Talkback tryAccessibilityAnnounce  >> View.announceForAccessibility(text)
+// https://developer.android.com/guide/topics/ui/accessibility/
