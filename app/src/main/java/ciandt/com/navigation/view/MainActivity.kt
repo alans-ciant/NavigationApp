@@ -37,48 +37,21 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.navigation_home -> {
                 message.setText(R.string.title_home)
-                hideMock()
 
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_history -> {
-                message.setText("")
-                showMock()
+                message.setText(R.string.title_history)
 
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_directions -> {
                 message.setText(R.string.title_directions)
-                hideMock()
 
                 return@OnNavigationItemSelectedListener true
             }
         }
         false
-    }
-
-    private fun createHistoryMock() {
-        val histories = ArrayList<BeaconTo>(10)
-        for (i in 0 until 10) {
-            histories.add(BeaconTo("name $i", "Lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum"))
-        }
-
-        val itemClickListener = object : ItemClickListener {
-            override fun onClick(beacon: BeaconTo) {
-                Toast.makeText(this@MainActivity, beacon.name, Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        recyclerview.setLayoutManager(LinearLayoutManager(this))
-        recyclerview.setAdapter(BeaconAdapter(this, itemClickListener, histories, emptyview))
-    }
-
-    fun showMock() {
-        recyclerview.visibility = VISIBLE
-    }
-
-    fun hideMock() {
-        recyclerview.visibility = INVISIBLE
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -105,8 +78,6 @@ class MainActivity : AppCompatActivity() {
         proximityObservationHandler = proximityObserver
                 //.addProximityZones(venueZone, mintDeskZone, blueberryDeskZone)
                 .start()
-
-        createHistoryMock()
     }
 
     // Estimote proximity
