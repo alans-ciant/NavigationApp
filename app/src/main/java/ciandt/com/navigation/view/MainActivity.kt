@@ -34,9 +34,9 @@ class MainActivity : AppCompatActivity() {
     // Estimote Attachment keys end
 
     // Estimote Attachment values ini
-    private val AVALUE_GARAGE = "garagem"
-    private val AVALUE_MALL = "alameda"
-    private val AVALUE_RECEPTION = "recepção"
+    private val AVALUE_GARAGE = "garage"
+    private val AVALUE_MALL = "mall"
+    private val AVALUE_RECEPTION = "reception"
     // Estimote Attachment values end
 
     // Estimote proximity ini
@@ -86,16 +86,20 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
+        // Estimote notification ini
+        notification = NotificationCreator().createNotification(this)
+        // Estimote notification end
+
+        /*
         // Estimote ini
         EstimoteSDK.initialize(applicationContext,
                 BuildConfig.ESTIMOTE_APP_ID_DEBUG,
                 BuildConfig.ESTIMOTE_APP_TOKEN_DEBUG)
         // Estimote end
-
-        // Estimote proximity ini
-        notification = NotificationCreator().createNotification(this)
-        // Estimote proximity end
+        */
 
         // Estimote requirement wizard ini
         RequirementsWizardFactory.createEstimoteRequirementsWizard().fulfillRequirements(
@@ -105,9 +109,6 @@ class MainActivity : AppCompatActivity() {
                 onError = displayToastAboutError
         )
         // Estimote requirement wizard end
-
-        setContentView(R.layout.activity_main)
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
     }
 
@@ -125,7 +126,9 @@ class MainActivity : AppCompatActivity() {
                         .withBalancedPowerMode()
                         //.withEstimoteSecureMonitoringDisabled()
                         //.withTelemetryReportingDisabled()
+                        .withOnErrorAction(displayToastAboutError)
                         .build()
+
         // Estimote zones ini
 
         // Recepção
@@ -160,11 +163,7 @@ class MainActivity : AppCompatActivity() {
                 .start()
         // Estimote observer end
 
-        Toast.makeText(this, "Done!", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Estimote config done!", Toast.LENGTH_SHORT).show()
     }
 
 }
-
-
-// TODO -- Talkback tryAccessibilityAnnounce  >> View.announceForAccessibility(text)
-// https://developer.android.com/guide/topics/ui/accessibility/
