@@ -6,16 +6,10 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
 import android.widget.Toast
 import ciandt.com.navigation.BuildConfig
 import ciandt.com.navigation.R
-import ciandt.com.navigation.model.BeaconTo
 import ciandt.com.navigation.model.NotificationCreator
-import ciandt.com.navigation.view.main.BeaconAdapter
-import ciandt.com.navigation.view.main.BeaconAdapter.ItemClickListener
 import com.estimote.coresdk.common.config.EstimoteSDK
 import com.estimote.proximity_sdk.proximity.EstimoteCloudCredentials
 import com.estimote.proximity_sdk.proximity.ProximityAttachment
@@ -23,7 +17,6 @@ import com.estimote.proximity_sdk.proximity.ProximityObserver
 import com.estimote.proximity_sdk.proximity.ProximityObserverBuilder
 import com.estimote.proximity_sdk.trigger.ProximityTriggerBuilder
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.main_beacon_rv.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -33,6 +26,10 @@ class MainActivity : AppCompatActivity() {
     val AKEY_VENUE = "venue"
     val AKEY_text = "text"
     // Estimote Attachment keys end
+
+    val AVALUE_GARAGE = "garagem";
+    var AVALUE_MALL = "alameda";
+    var AVALUE_RECEPTION = "recepção";
 
     // Estimote proximity ini
     private lateinit var notification: Notification
@@ -98,7 +95,7 @@ class MainActivity : AppCompatActivity() {
         // Estimote zones ini
         // Recepção
         val receptionRoomZone = proximityObserver.zoneBuilder()
-                .forAttachmentKeyAndValue("venue", "office")
+                .forAttachmentKeyAndValue(AKEY_VENUE, AVALUE_RECEPTION)
                 .inCustomRange(5.0)
                 .withOnEnterAction(makeOnEnterAction)
                 .withOnExitAction(makeOnExitAction)
@@ -106,7 +103,7 @@ class MainActivity : AppCompatActivity() {
 
         // Alameda
         val mallZone = proximityObserver.zoneBuilder()
-                .forAttachmentKeyAndValue("venue", "office")
+                .forAttachmentKeyAndValue(AKEY_VENUE, AVALUE_MALL)
                 .inCustomRange(5.0)
                 .withOnEnterAction(makeOnEnterAction)
                 .withOnExitAction(makeOnExitAction)
@@ -114,7 +111,7 @@ class MainActivity : AppCompatActivity() {
 
         // Garage
         val garageZone = proximityObserver.zoneBuilder()
-                .forAttachmentKeyAndValue("venue", "office")
+                .forAttachmentKeyAndValue(AKEY_VENUE, AVALUE_GARAGE)
                 .inCustomRange(5.0)
                 .withOnEnterAction(makeOnEnterAction)
                 .withOnExitAction(makeOnExitAction)
