@@ -22,16 +22,22 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
+    // Estimote desiredMeanTriggerDistance
+    // https://blog.estimote.com/post/166007374930/the-most-reliable-proximity-tech-now-with-a
+    private val DESIRED_MEAN_TRIGGER_DISTANCE = 1.0;
+
     // Estimote Attachment keys ini
-    val AKEY_BUILDING = "building"
-    val AKEY_FLOOR = "floor"
-    val AKEY_VENUE = "venue"
-    val AKEY_text = "text"
+    private val AKEY_BUILDING = "building"
+    private val AKEY_FLOOR = "floor"
+    private val AKEY_VENUE = "venue"
+    private val AKEY_text = "text"
     // Estimote Attachment keys end
 
-    val AVALUE_GARAGE = "garagem";
-    var AVALUE_MALL = "alameda";
-    var AVALUE_RECEPTION = "recepção";
+    // Estimote Attachment values ini
+    private val AVALUE_GARAGE = "garagem"
+    private val AVALUE_MALL = "alameda"
+    private val AVALUE_RECEPTION = "recepção"
+    // Estimote Attachment values end
 
     // Estimote proximity ini
     private lateinit var notification: Notification
@@ -117,13 +123,15 @@ class MainActivity : AppCompatActivity() {
                 ProximityObserverBuilder(applicationContext, cloudCredentials)
                         .withScannerInForegroundService(notification)
                         .withBalancedPowerMode()
+                        //.withEstimoteSecureMonitoringDisabled()
+                        //.withTelemetryReportingDisabled()
                         .build()
         // Estimote zones ini
 
         // Recepção
         val receptionRoomZone = proximityObserver.zoneBuilder()
                 .forAttachmentKeyAndValue(AKEY_VENUE, AVALUE_RECEPTION)
-                .inCustomRange(5.0)
+                .inCustomRange(DESIRED_MEAN_TRIGGER_DISTANCE)
                 .withOnEnterAction(makeOnEnterAction)
                 .withOnExitAction(makeOnExitAction)
                 .create()
@@ -131,7 +139,7 @@ class MainActivity : AppCompatActivity() {
         // Alameda
         val mallZone = proximityObserver.zoneBuilder()
                 .forAttachmentKeyAndValue(AKEY_VENUE, AVALUE_MALL)
-                .inCustomRange(5.0)
+                .inCustomRange(DESIRED_MEAN_TRIGGER_DISTANCE)
                 .withOnEnterAction(makeOnEnterAction)
                 .withOnExitAction(makeOnExitAction)
                 .create()
@@ -139,7 +147,7 @@ class MainActivity : AppCompatActivity() {
         // Garage
         val garageZone = proximityObserver.zoneBuilder()
                 .forAttachmentKeyAndValue(AKEY_VENUE, AVALUE_GARAGE)
-                .inCustomRange(5.0)
+                .inCustomRange(DESIRED_MEAN_TRIGGER_DISTANCE)
                 .withOnEnterAction(makeOnEnterAction)
                 .withOnExitAction(makeOnExitAction)
                 .create()
@@ -151,39 +159,10 @@ class MainActivity : AppCompatActivity() {
                 .addProximityZones(receptionRoomZone, mallZone, garageZone)
                 .start()
         // Estimote observer end
+
+        Toast.makeText(this, "Done!", Toast.LENGTH_SHORT).show()
     }
 
-    // Estimote proximity
-    private fun showTriggerSetupDialog() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            Toast.makeText(this, "ProximityTrigger works only on devices with Android 8.0+", Toast.LENGTH_SHORT).show()
-        } else {
-            createTriggerDialog().show()
-        }
-    }
-
-    private fun createTriggerDialog() =
-            AlertDialog.Builder(this)
-                    .setTitle("ProximityTrigger setup")
-                    .setMessage("The ProximityTrigger will display your notification when the user" +
-                            " has entered the proximity of beacons. " +
-                            "You can leave your beacons range, enable the trigger, kill your app, " +
-                            "and go back - see what happens!")
-                    .setPositiveButton("Enable", { _, _ ->
-                        val notification = NotificationCreator().createTriggerNotification(this)
-                        ProximityTriggerBuilder(this)
-                                .displayNotificationWhenInProximity(notification)
-                                .build()
-                                .start()
-                        Toast.makeText(this, "Trigger enabled!", Toast.LENGTH_SHORT).show()
-                    })
-                    .setNegativeButton("Disable", { _, _ ->
-                        val notification = NotificationCreator().createTriggerNotification(this)
-                        ProximityTriggerBuilder(this).displayNotificationWhenInProximity(notification)
-                                .build()
-                                .start().stop()
-                        Toast.makeText(this, "Trigger disabled.", Toast.LENGTH_SHORT).show()
-                    }).create()
 }
 
 
