@@ -4,9 +4,7 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.widget.Toast
 import ciandt.com.navigation.R
-import ciandt.com.navigation.model.BeaconTo
 import com.estimote.coresdk.common.requirements.SystemRequirementsChecker
 import com.estimote.coresdk.observation.region.beacon.BeaconRegion
 import com.estimote.coresdk.recognition.packets.Beacon
