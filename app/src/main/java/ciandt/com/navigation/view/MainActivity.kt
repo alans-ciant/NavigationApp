@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
 import ciandt.com.navigation.R
+import ciandt.com.navigation.model.BeaconTo
 import com.estimote.coresdk.common.requirements.SystemRequirementsChecker
 import com.estimote.coresdk.observation.region.beacon.BeaconRegion
 import com.estimote.coresdk.recognition.packets.Beacon
@@ -15,8 +16,8 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val SCAN_PERIOD = (10 * 1000).toLong()
-    private val SCAN_INTERVAL = (5 * 1000).toLong()
+    private val SCAN_PERIOD = (20 * 1000).toLong()
+    private val SCAN_INTERVAL = (20 * 1000).toLong()
 
     // 23B
     private val IDENTIFIER_23B = "prédio 23B"
@@ -40,17 +41,17 @@ class MainActivity : AppCompatActivity() {
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_home -> {
-                message.setText(R.string.title_home)
+                //message.setText(R.string.title_home)
 
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_history -> {
-                message.setText(R.string.title_history)
+                //message.setText(R.string.title_history)
 
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_directions -> {
-                message.setText(R.string.title_directions)
+                //message.setText(R.string.title_directions)
 
                 return@OnNavigationItemSelectedListener true
             }
@@ -65,7 +66,7 @@ class MainActivity : AppCompatActivity() {
 
         beaconManager = BeaconManager(this)
         // Scan period and interval
-        beaconManager.setBackgroundScanPeriod(SCAN_PERIOD, SCAN_INTERVAL)
+        //beaconManager.setBackgroundScanPeriod(SCAN_PERIOD, SCAN_INTERVAL)
 
         beaconManager.setRangingListener(BeaconManager.BeaconRangingListener { region, list ->
             if (!list.isEmpty()) {
@@ -73,12 +74,10 @@ class MainActivity : AppCompatActivity() {
                 val places = placesNearBeacon(nearestBeacon)
 
                 val text = "Região: " + region.identifier + " " + places.toString()
-                //mTextMessage.setText(text)
 
-                Toast.makeText(this@MainActivity, text, Toast.LENGTH_SHORT).show()
+                message.setText(text)
 
-
-                Log.d("DEBUG: ", text)
+                Log.d("DEBUG RANGING: ", text)
             }
         })
 
@@ -129,6 +128,8 @@ class MainActivity : AppCompatActivity() {
                 add("Pimbolim")
             }
         })
+
+        Log.d("DEBUG BEACON: ", beacon.toString())
 
         val beaconKey = String.format("%d:%d", beacon.major, beacon.minor)
 
