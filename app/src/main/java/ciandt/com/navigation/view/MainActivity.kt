@@ -19,8 +19,8 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val SCAN_PERIOD = (20 * 1000).toLong()
-    private val SCAN_INTERVAL = (20 * 1000).toLong()
+    private val SCAN_PERIOD = (1 * 1000).toLong()
+    private val SCAN_INTERVAL = 0L
 
     // 23B
     private val IDENTIFIER_23B = "prédio 23B"
@@ -77,6 +77,8 @@ class MainActivity : AppCompatActivity() {
             if (!list.isEmpty()) {
                 val nearestBeacon = list[0]
                 val places = placesNearBeacon(nearestBeacon)
+
+                Log.d("DEBUG NEAREST BEACON: ", nearestBeacon.toString())
 
                 val txt  = "Região: " + region.identifier + " " + places.toString()
 
@@ -153,8 +155,7 @@ class MainActivity : AppCompatActivity() {
         return placesByBeacons
     }
 
-
-    fun showNotification(title: String, message: String) {
+    private fun showNotification(title: String, message: String) {
         val notifyIntent = Intent(this, MainActivity::class.java)
         notifyIntent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
         val pendingIntent = PendingIntent.getActivities(this, 0,
