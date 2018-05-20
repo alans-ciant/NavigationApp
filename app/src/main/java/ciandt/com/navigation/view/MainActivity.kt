@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.widget.Toast
 import ciandt.com.navigation.R
 import com.estimote.coresdk.common.requirements.SystemRequirementsChecker
 import com.estimote.coresdk.observation.region.beacon.BeaconRegion
@@ -36,8 +37,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var region23B: BeaconRegion
     private lateinit var regionMall: BeaconRegion
 
-    private lateinit var placesByBeacons: Map<String, List<String>>
-
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_home -> {
@@ -64,8 +63,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
-        configurePlaces()
-
         beaconManager = BeaconManager(this)
         // Scan period and interval
         beaconManager.setBackgroundScanPeriod(SCAN_PERIOD, SCAN_INTERVAL)
@@ -78,6 +75,9 @@ class MainActivity : AppCompatActivity() {
                 val text = "Região: " + region.identifier + " " + places.toString()
                 //mTextMessage.setText(text)
 
+                Toast.makeText(this@MainActivity, text, Toast.LENGTH_SHORT).show()
+
+
                 Log.d("DEBUG: ", text)
             }
         })
@@ -88,8 +88,26 @@ class MainActivity : AppCompatActivity() {
                 UUID.fromString(UUID_MALL), null, null)
     }
 
-    private fun configurePlaces() {
+    override fun onResume() {
+        super.onResume()
+
+        SystemRequirementsChecker.checkWithDefaultDialogs(this)
+        beaconManager.connect(BeaconManager.ServiceReadyCallback {
+            beaconManager.startRanging(region23B)
+            beaconManager.startRanging(regionMall)
+        })
+    }
+
+    override fun onPause() {
+        beaconManager.stopRanging(region23B)
+        beaconManager.stopRanging(regionMall)
+
+        super.onPause()
+    }
+
+    private fun placesNearBeacon(beacon: Beacon): List<String>? {
         var placesByBeacons = HashMap<String, List<String>>()
+
         placesByBeacons.put(
                 (BEACON_MAJOR_23B_RECEPTION).toString() +
                         DOUBLE_DOT +
@@ -112,28 +130,8 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        //placesByBeacons = Collections.unmodifiableMap(placesByBeacons)
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        SystemRequirementsChecker.checkWithDefaultDialogs(this)
-        beaconManager.connect(BeaconManager.ServiceReadyCallback {
-            beaconManager.startRanging(region23B)
-            beaconManager.startRanging(regionMall)
-        })
-    }
-
-    override fun onPause() {
-        beaconManager.stopRanging(region23B)
-        beaconManager.stopRanging(regionMall)
-
-        super.onPause()
-    }
-
-    private fun placesNearBeacon(beacon: Beacon): List<String>? {
         val beaconKey = String.format("%d:%d", beacon.major, beacon.minor)
+
         return if (placesByBeacons.containsKey(beaconKey)) {
             placesByBeacons.get(beaconKey)
         } else emptyList()
