@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
 
         beaconManager = BeaconManager(this)
         // Scan period and interval
-        //beaconManager.setBackgroundScanPeriod(SCAN_PERIOD, SCAN_INTERVAL)
+        beaconManager.setBackgroundScanPeriod(SCAN_PERIOD, SCAN_INTERVAL)
 
         beaconManager.setRangingListener(BeaconManager.BeaconRangingListener { region, list ->
             if (!list.isEmpty()) {
@@ -103,6 +103,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun placesNearBeacon(beacon: Beacon): List<String>? {
+        Log.d("DEBUG BEACON: ", beacon.toString())
+
+        var placesByBeacons = hashMapPlaces()
+        val beaconKey = String.format("%d:%d", beacon.major, beacon.minor)
+
+        return if (placesByBeacons.containsKey(beaconKey)) {
+            placesByBeacons.get(beaconKey)
+        } else emptyList()
+    }
+
+    private fun hashMapPlaces(): HashMap<String, List<String>> {
         var placesByBeacons = HashMap<String, List<String>>()
 
         placesByBeacons.put(
@@ -126,13 +137,6 @@ class MainActivity : AppCompatActivity() {
                 add("Pimbolim")
             }
         })
-
-        Log.d("DEBUG BEACON: ", beacon.toString())
-
-        val beaconKey = String.format("%d:%d", beacon.major, beacon.minor)
-
-        return if (placesByBeacons.containsKey(beaconKey)) {
-            placesByBeacons.get(beaconKey)
-        } else emptyList()
+        return placesByBeacons
     }
 }
