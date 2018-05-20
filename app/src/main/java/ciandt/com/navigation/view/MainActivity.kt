@@ -1,5 +1,10 @@
 package ciandt.com.navigation.view
 
+import android.app.Notification
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
@@ -80,6 +85,7 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     homeTxt = txt
                     message.setText(homeTxt)
+                    showNotification("Navigation", txt)
                     Log.d("DEBUG RANGING: ", homeTxt)
                 }
 
@@ -145,5 +151,23 @@ class MainActivity : AppCompatActivity() {
             }
         })
         return placesByBeacons
+    }
+
+
+    fun showNotification(title: String, message: String) {
+        val notifyIntent = Intent(this, MainActivity::class.java)
+        notifyIntent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+        val pendingIntent = PendingIntent.getActivities(this, 0,
+                arrayOf(notifyIntent), PendingIntent.FLAG_UPDATE_CURRENT)
+        val notification = Notification.Builder(this)
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+                .build()
+        notification.defaults = notification.defaults or Notification.DEFAULT_SOUND
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(1, notification)
     }
 }
