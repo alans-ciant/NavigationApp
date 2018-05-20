@@ -36,6 +36,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var region23B: BeaconRegion
     private lateinit var regionMall: BeaconRegion
 
+    private var homeTxt: String = ""
+
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_home -> {
@@ -71,11 +73,16 @@ class MainActivity : AppCompatActivity() {
                 val nearestBeacon = list[0]
                 val places = placesNearBeacon(nearestBeacon)
 
-                val text = "Região: " + region.identifier + " " + places.toString()
+                val txt  = "Região: " + region.identifier + " " + places.toString()
 
-                message.setText(text)
+                if (txt.equals(homeTxt)) {
+                    Log.d("DEBUG RANGING: ", "Ignoring...")
+                } else {
+                    homeTxt = txt
+                    message.setText(homeTxt)
+                    Log.d("DEBUG RANGING: ", homeTxt)
+                }
 
-                Log.d("DEBUG RANGING: ", text)
             }
         })
 
