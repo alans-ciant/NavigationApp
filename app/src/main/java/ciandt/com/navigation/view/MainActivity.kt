@@ -17,6 +17,7 @@ import com.estimote.coresdk.service.BeaconManager
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
+
 class MainActivity : AppCompatActivity() {
 
     private val SCAN_PERIOD = (1 * 1000).toLong()
@@ -25,12 +26,26 @@ class MainActivity : AppCompatActivity() {
     // 23B
     private val IDENTIFIER_23B = "prédio 23B"
     private val UUID_23B = "B9407F30-F5F8-466E-AFF9-25556B57FE6D"
+    // Reception
     private val BEACON_MAJOR_23B_RECEPTION = 15673
     private val BEACON_MINOR_23B_RECEPTION = 2504
+    // Garage
+    private var BEACON_MAJOR_23B_GARAGE = 46445
+    private var BEACON_MINOR_23B_GARAGE = 2555
+    // Administration
+    private var BEACON_MAJOR_23B_ADMINISTRATION = 62558
+    private var BEACON_MINOR_23B_ADMINISTRATION = 229777
+    // Marketing
+    private var BEACON_MAJOR_23B_MARKETING = 34893
+    private var BEACON_MINOR_23B_MARKETING = 52699
+    // Human Resources
+    private var BEACON_MAJOR_23B_HUMAN_RESOURCES = 64386
+    private var BEACON_MINOR_23B_HUMAN_RESOURCES = 39261
 
     // MALL
     private val IDENTIFIER_MALL = "alameda Ci&T"
     private val UUID_MALL = "687DBC06-BE1C-424C-B0EC-942B2A729674"
+    // Entrance
     private val BEACON_MAJOR_ENTRANCE_MALL = 52381
     private val BEACON_MINOR_ENTRANCE_MALL = 22058
 
@@ -80,7 +95,7 @@ class MainActivity : AppCompatActivity() {
 
                 Log.d("DEBUG NEAREST BEACON: ", nearestBeacon.toString())
 
-                val txt  = "Região: " + region.identifier + " " + places.toString()
+                val txt = "Região: " + region.identifier + " " + places.toString()
 
                 if (txt.equals(homeTxt)) {
                     Log.d("DEBUG RANGING: ", "Ignoring...")
@@ -131,25 +146,67 @@ class MainActivity : AppCompatActivity() {
     private fun hashMapPlaces(): HashMap<String, List<String>> {
         var placesByBeacons = HashMap<String, List<String>>()
 
-        placesByBeacons.put(
-                (BEACON_MAJOR_23B_RECEPTION).toString() +
-                        DOUBLE_DOT +
-                        BEACON_MINOR_23B_RECEPTION, object : ArrayList<String>() {
+        // 23B Reception
+        placesByBeacons[BEACON_MAJOR_23B_RECEPTION.toString() +
+                DOUBLE_DOT +
+                BEACON_MINOR_23B_RECEPTION] = object : ArrayList<String>() {
+            init {
+                add("Porta de entrada do prédio")
+                add("Escada de acesso ao primeiro andar")
+                add("Garagem")
+                add("Porta de acesso interno com biometria")
+            }
+        }
+        // 23B Garage
+        placesByBeacons[BEACON_MAJOR_23B_GARAGE.toString() +
+                DOUBLE_DOT +
+                BEACON_MINOR_23B_GARAGE] = object : ArrayList<String>() {
             init {
                 add("Recepção")
-                add("Garagem")
+                add("Porta de acesso interno com biometria")
+            }
+        }
+        // 23B Marketing
+        placesByBeacons[BEACON_MAJOR_23B_MARKETING.toString() +
+                DOUBLE_DOT +
+                BEACON_MINOR_23B_MARKETING] = object : ArrayList<String>() {
+            init {
+                add("Porta de acesso interno com biometria")
                 add("Marketing")
+                add("Salas de reunião")
+                add("Administrativo")
+            }
+        }
+        // 23B Administration
+        placesByBeacons[BEACON_MAJOR_23B_ADMINISTRATION.toString() +
+                DOUBLE_DOT +
+                BEACON_MINOR_23B_ADMINISTRATION] = object : ArrayList<String>() {
+            init {
+                add("Marketing")
+                add("Salas de reunião")
+                add("Banheiros")
                 add("Recursos Humanos")
             }
-        })
+        }
+        // 23B Human Resources
+        placesByBeacons[BEACON_MAJOR_23B_RECEPTION.toString() +
+                DOUBLE_DOT +
+                BEACON_MINOR_23B_RECEPTION] = object : ArrayList<String>() {
+            init {
+                add("Administrativo")
+                add("Quitanda Geek")
+                add("Cozinha")
+            }
+        }
+        // 23B Mall
         placesByBeacons.put(
                 ((BEACON_MAJOR_ENTRANCE_MALL).toString() +
                         DOUBLE_DOT +
                         BEACON_MINOR_ENTRANCE_MALL), object : ArrayList<String>() {
             init {
-                add("Mesas")
-                add("Bilhar")
-                add("Pimbolim")
+                add("Escada de acesso a rua")
+                add("Àrea coberta com mesas e sofás")
+                add("Porta de acesso ao prédio 23B")
             }
         })
         return placesByBeacons
