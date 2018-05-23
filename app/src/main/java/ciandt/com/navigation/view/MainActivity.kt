@@ -189,9 +189,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
         // 23B Human Resources
-        placesByBeacons[BEACON_MAJOR_23B_RECEPTION.toString() +
+        placesByBeacons[BEACON_MAJOR_23B_HUMAN_RESOURCES.toString() +
                 DOUBLE_DOT +
-                BEACON_MINOR_23B_RECEPTION] = object : ArrayList<String>() {
+                BEACON_MINOR_23B_HUMAN_RESOURCES] = object : ArrayList<String>() {
             init {
                 add("Administrativo")
                 add("Quitanda Geek")
