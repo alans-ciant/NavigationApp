@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.widget.Toast
 import ciandt.com.navigation.R
 import com.estimote.coresdk.common.requirements.SystemRequirementsChecker
 import com.estimote.coresdk.observation.region.beacon.BeaconRegion
@@ -20,8 +21,8 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val SCAN_PERIOD = (1 * 1000).toLong()
-    private val SCAN_INTERVAL = 0L
+    private val SCAN_PERIOD = (60 * 1000).toLong()
+    private val SCAN_INTERVAL = (5 * 1000).toLong()
 
     // 23B
     private val IDENTIFIER_23B = "prédio 23B"
@@ -32,6 +33,9 @@ class MainActivity : AppCompatActivity() {
     // Garage
     private var BEACON_MAJOR_23B_GARAGE = 46445
     private var BEACON_MINOR_23B_GARAGE = 2555
+    // Meeting room
+    private var BEACON_MAJOR_23B_MEETING_ROOM = 16097
+    private var BEACON_MINOR_23B_MEETING_ROOM = 19559
     // Administration
     private var BEACON_MAJOR_23B_ADMINISTRATION = 62558
     private var BEACON_MINOR_23B_ADMINISTRATION = 229777
@@ -92,10 +96,8 @@ class MainActivity : AppCompatActivity() {
             if (!list.isEmpty()) {
                 val nearestBeacon = list[0]
                 val places = placesNearBeacon(nearestBeacon)
-
-                Log.d("DEBUG NEAREST BEACON: ", nearestBeacon.toString())
-
                 val txt = "Região: " + region.identifier + " " + places.toString()
+                Log.d("DEBUG NEAREST BEACON: ", nearestBeacon.toString())
 
                 if (txt.equals(homeTxt)) {
                     Log.d("DEBUG RANGING: ", "Ignoring...")
@@ -105,7 +107,6 @@ class MainActivity : AppCompatActivity() {
                     showNotification("Navigation", txt)
                     Log.d("DEBUG RANGING: ", homeTxt)
                 }
-
             }
         })
 
@@ -155,6 +156,15 @@ class MainActivity : AppCompatActivity() {
                 add("Escada de acesso ao primeiro andar")
                 add("Garagem")
                 add("Porta de acesso interno com biometria")
+            }
+        }
+        // 23B Meeting room
+        placesByBeacons[BEACON_MAJOR_23B_MEETING_ROOM.toString() +
+                DOUBLE_DOT +
+                BEACON_MINOR_23B_MEETING_ROOM] = object : ArrayList<String>() {
+            init {
+                add("Recepção")
+                add("Sala de reunião")
             }
         }
         // 23B Garage
