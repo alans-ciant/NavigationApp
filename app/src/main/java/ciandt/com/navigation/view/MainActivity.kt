@@ -41,6 +41,9 @@ class MainActivity : AppCompatActivity() {
     // Human Resources
     private var BEACON_MAJOR_23B_HUMAN_RESOURCES = 64386
     private var BEACON_MINOR_23B_HUMAN_RESOURCES = 39261
+    // Test
+    private var BEACON_MAJOR_23B_TEST = 11111
+    private var BEACON_MINOR_23B_TEST = 7777
 
     // MALL
     private val IDENTIFIER_MALL = "alameda Ci&T"
@@ -61,18 +64,12 @@ class MainActivity : AppCompatActivity() {
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_home -> {
-                //message.setText(R.string.title_home)
-
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_history -> {
-                //message.setText(R.string.title_history)
-
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_directions -> {
-                //message.setText(R.string.title_directions)
-
                 return@OnNavigationItemSelectedListener true
             }
         }
@@ -86,7 +83,7 @@ class MainActivity : AppCompatActivity() {
 
         beaconManager = BeaconManager(this)
         // Scan period and interval
-        beaconManager.setBackgroundScanPeriod(SCAN_PERIOD, SCAN_INTERVAL)
+        beaconManager.setForegroundScanPeriod(SCAN_PERIOD, SCAN_INTERVAL)
 
         beaconManager.setRangingListener(BeaconManager.BeaconRangingListener { region, list ->
             if (!list.isEmpty()) {
@@ -119,7 +116,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
 
         SystemRequirementsChecker.checkWithDefaultDialogs(this)
-        beaconManager.connect(BeaconManager.ServiceReadyCallback {
+        beaconManager.connect({
             beaconManager.startRanging(region23B)
             beaconManager.startRanging(regionMall)
         })
@@ -189,13 +186,21 @@ class MainActivity : AppCompatActivity() {
             }
         }
         // 23B Human Resources
-        placesByBeacons[BEACON_MAJOR_23B_RECEPTION.toString() +
+        placesByBeacons[BEACON_MAJOR_23B_HUMAN_RESOURCES.toString() +
                 DOUBLE_DOT +
-                BEACON_MINOR_23B_RECEPTION] = object : ArrayList<String>() {
+                BEACON_MINOR_23B_HUMAN_RESOURCES] = object : ArrayList<String>() {
             init {
                 add("Administrativo")
                 add("Quitanda Geek")
                 add("Cozinha")
+            }
+        }
+        // TEST
+        placesByBeacons[BEACON_MAJOR_23B_TEST.toString() +
+                DOUBLE_DOT +
+                BEACON_MINOR_23B_TEST] = object : ArrayList<String>() {
+            init {
+                add("Pedro")
             }
         }
         // 23B Mall

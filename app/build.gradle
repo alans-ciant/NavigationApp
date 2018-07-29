@@ -23,6 +23,10 @@ android {
             applicationIdSuffix ".debug"
             debuggable true
         }
+        buildTypes.each {
+            it.buildConfigField 'String', 'ESTIMOTE_APP_ID', estimoteAppId
+            it.buildConfigField 'String', 'ESTIMOTE_APP_TOKEN', estimoteAppToken
+        }
     }
 }
 
@@ -41,12 +45,14 @@ dependencies {
     implementation "com.android.support:support-v4:${supportLibVersion}"
     implementation "com.android.support:cardview-v7:${supportLibVersion}"
 
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
 
-    implementation 'com.estimote:sdk:1.4.2'
+    implementation 'com.estimote:sdk:1.4.1'
+
+    implementation 'com.jakewharton.timber:timber:4.7.1'
 
     testImplementation 'junit:junit:4.12'
 
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
