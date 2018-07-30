@@ -39,7 +39,6 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:visibility="invisible"
             tools:listitem="@layout/beacon_rv_item"/>
 
         <TextView

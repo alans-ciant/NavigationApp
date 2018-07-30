@@ -10,7 +10,7 @@
     android:focusable="true">
 
     <TextView
-        android:id="@+id/name_textview"
+        android:id="@+id/textViewPlace"
         style="@style/TextAppearance.AppCompat.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,23 +18,23 @@
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Beacon 1"/>
+        tools:text="23B"/>
 
     <TextView
-        android:id="@+id/description_textview"
-        style="@style/Base.TextAppearance.AppCompat.Small"
+        android:id="@+id/textViewDescription"
+        style="@style/Base.TextAppearance.AppCompat.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="@id/name_textview"
-        app:layout_constraintTop_toBottomOf="@id/name_textview"
-        tools:text="Description 1"/>
+        app:layout_constraintLeft_toLeftOf="@id/textViewPlace"
+        app:layout_constraintTop_toBottomOf="@id/textViewPlace"
+        tools:text="Recepçao"/>
 
     <View
         android:layout_width="wrap_content"
         android:layout_height="0.5dp"
         android:layout_marginTop="@dimen/default_margin"
         android:background="@drawable/line_divider"
-        app:layout_constraintLeft_toLeftOf="@id/name_textview"
-        app:layout_constraintTop_toBottomOf="@id/description_textview"/>
+        app:layout_constraintLeft_toLeftOf="@id/textViewPlace"
+        app:layout_constraintTop_toBottomOf="@id/textViewDescription"/>
 
 </android.support.constraint.ConstraintLayout>
