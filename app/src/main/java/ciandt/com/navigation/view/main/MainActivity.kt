@@ -1,4 +1,4 @@
-package ciandt.com.navigation.view
+package ciandt.com.navigation.view.main
 
 import android.app.Notification
 import android.app.NotificationManager
@@ -15,6 +15,8 @@ import com.estimote.coresdk.observation.region.beacon.BeaconRegion
 import com.estimote.coresdk.recognition.packets.Beacon
 import com.estimote.coresdk.service.BeaconManager
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.beacon_cardview.*
+import timber.log.Timber
 import java.util.*
 
 
@@ -90,19 +92,17 @@ class MainActivity : AppCompatActivity() {
                 val nearestBeacon = list[0]
                 val places = placesNearBeacon(nearestBeacon)
 
-                Log.d("DEBUG NEAREST BEACON: ", nearestBeacon.toString())
+                Timber.d(nearestBeacon.toString())
 
                 val txt = "Região: " + region.identifier + " " + places.toString()
 
-                if (txt.equals(homeTxt)) {
-                    Log.d("DEBUG RANGING: ", "Ignoring...")
-                } else {
-                    homeTxt = txt
-                    message.setText(homeTxt)
-                    showNotification("Navigation", txt)
-                    Log.d("DEBUG RANGING: ", homeTxt)
-                }
+                homeTxt = txt
+                /*showNotification("Navigation", txt)*/
+                Timber.d(homeTxt)
 
+                textViewRegion.text = region.identifier
+                textViewPlace.text = places?.get(0) ?: "Beacon not found"
+                textViewDescription.text = "Lorem ipsum"
             }
         })
 
@@ -132,7 +132,7 @@ class MainActivity : AppCompatActivity() {
     private fun placesNearBeacon(beacon: Beacon): List<String>? {
         Log.d("DEBUG BEACON: ", beacon.toString())
 
-        var placesByBeacons = hashMapPlaces()
+        val placesByBeacons = hashMapPlaces()
         val beaconKey = String.format("%d:%d", beacon.major, beacon.minor)
 
         return if (placesByBeacons.containsKey(beaconKey)) {
@@ -141,7 +141,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun hashMapPlaces(): HashMap<String, List<String>> {
-        var placesByBeacons = HashMap<String, List<String>>()
+        val placesByBeacons = HashMap<String, List<String>>()
 
         // 23B Reception
         placesByBeacons[BEACON_MAJOR_23B_RECEPTION.toString() +
@@ -200,7 +200,7 @@ class MainActivity : AppCompatActivity() {
                 DOUBLE_DOT +
                 BEACON_MINOR_23B_TEST] = object : ArrayList<String>() {
             init {
-                add("Pedro")
+                add("Beacon de Teste")
             }
         }
         // 23B Mall

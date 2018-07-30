@@ -5,4 +5,8 @@
     <string name="title_directions">Directions</string>
 
     <string name="no_beacon_available">No beacon available</string>
+
+    <string name="labelRegion">Region:</string>
+    <string name="labelPlace">Place:</string>
+    <string name="labelDescription">Description:</string>
 </resources>
