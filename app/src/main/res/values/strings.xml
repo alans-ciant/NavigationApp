@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Navigation</string>
+    <string name="app_name">Navigation App</string>
     <string name="title_home">Home</string>
     <string name="title_history">History</string>
     <string name="title_directions">Directions</string>

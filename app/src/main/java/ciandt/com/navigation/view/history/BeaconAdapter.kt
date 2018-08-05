@@ -37,7 +37,7 @@ class BeaconAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.beacon_rv_item, parent, false)
+        val view = LayoutInflater.from(context).inflate(R.layout.beacon_cardview, parent, false)
         return ViewHolder(view)
     }
 

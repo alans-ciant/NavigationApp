@@ -7,18 +7,26 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
+import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
+import android.view.MenuItem
+import android.widget.Toast
 import ciandt.com.navigation.R
+import ciandt.com.navigation.view.history.BeaconAdapter
 import com.crashlytics.android.Crashlytics
 import com.estimote.coresdk.common.requirements.SystemRequirementsChecker
 import com.estimote.coresdk.observation.region.beacon.BeaconRegion
 import com.estimote.coresdk.recognition.packets.Beacon
 import com.estimote.coresdk.service.BeaconManager
+import io.fabric.sdk.android.Fabric
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.beacon_cardview.*
+import kotlinx.android.synthetic.main.main_beacon_rv.*
 import timber.log.Timber
 import java.util.*
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -64,6 +72,12 @@ class MainActivity : AppCompatActivity() {
 
     private var homeTxt: String = ""
 
+    private val beaconAdapter by lazy {
+        BeaconAdapter(this, emptyview) { beacon ->
+            Toast.makeText(applicationContext, "$beacon", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_home -> {
@@ -85,12 +99,14 @@ class MainActivity : AppCompatActivity() {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         Fabric.with(this, Crashlytics())
 
+        recyclerViewBeacons.layoutManager = LinearLayoutManager(this)
+        recyclerViewBeacons.adapter = beaconAdapter
         beaconManager = BeaconManager(this)
         // Scan period and interval
         beaconManager.setForegroundScanPeriod(SCAN_PERIOD, SCAN_INTERVAL)
 
         beaconManager.setRangingListener(BeaconManager.BeaconRangingListener { region, list ->
-            if (!list.isEmpty()) {
+            for (beacon in list) {
                 val nearestBeacon = list[0]
                 val places = placesNearBeacon(nearestBeacon)
 
@@ -102,9 +118,18 @@ class MainActivity : AppCompatActivity() {
                 /*showNotification("Navigation", txt)*/
                 Timber.d(homeTxt)
 
-                textViewRegion.text = region.identifier
+                /*textViewRegion.text = region.identifier
                 textViewPlace.text = places?.get(0) ?: "Beacon not found"
-                textViewDescription.text = "Lorem ipsum"
+                textViewDescription.text = "Lorem ipsum"*/
+
+                beaconAdapter.insert(ciandt.com.navigation.model.Beacon(
+                        region.identifier,
+                        places?.get(0) ?: "Beacon not found",
+                        places?.toString() ?: "Beacon not found"
+                ))
+
+//                viewPager.addOnPageChangeListener(onPageChangeListener)
+
             }
         })
 
@@ -202,7 +227,8 @@ class MainActivity : AppCompatActivity() {
                 DOUBLE_DOT +
                 BEACON_MINOR_23B_TEST] = object : ArrayList<String>() {
             init {
-                add("Beacon de Teste")
+                add("Projeto Honda Honda Honda Honda Honda ")
+                add("Descrição de teste")
             }
         }
         // 23B Mall

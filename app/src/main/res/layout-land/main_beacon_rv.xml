@@ -35,7 +35,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerview"
+            android:id="@+id/recyclerViewBeacons"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="vertical"
