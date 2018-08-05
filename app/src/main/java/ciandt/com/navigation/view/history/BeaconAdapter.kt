@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import ciandt.com.navigation.R
 import ciandt.com.navigation.model.Beacon
+import ciandt.com.navigation.view.utils.SpannableStringCreator
 import kotlinx.android.synthetic.main.beacon_cardview.view.*
 import java.util.*
 
@@ -20,15 +21,30 @@ class BeaconAdapter(
         private val listener: (Beacon) -> Unit
 ) : RecyclerView.Adapter<BeaconAdapter.ViewHolder>() {
 
+    companion object {
+        const val ITEMS_LIMIT = 5 // Firebase
+    }
+
     private val beacons = LinkedList<Beacon>()
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bindView(beacon: Beacon, listener: (Beacon) -> Unit) = with(itemView) {
 
-            textViewRegion.text = beacon.region
-            textViewPlace.text = beacon.place
-            textViewDescription.text = beacon.description
+            textViewRegion.text = SpannableStringCreator()
+                    .appendBold(R.string.labelRegion, context)
+                    .appendSpace(beacon.region)
+                    .toSpannableString()
+
+            textViewPlace.text = SpannableStringCreator()
+                    .appendBold(R.string.labelPlace, context)
+                    .appendSpace(beacon.place)
+                    .toSpannableString()
+
+            textViewDescription.text = SpannableStringCreator()
+                    .appendBold(R.string.labelDescription, context)
+                    .appendSpace(beacon.description)
+                    .toSpannableString()
 
             setOnClickListener {
                 listener(beacon)
@@ -49,9 +65,11 @@ class BeaconAdapter(
     }
 
     fun insert(beacon: Beacon) {
-        if (beacons.contains(beacon)) return
+        if (beacons.contains(beacon)) beacons.remove(beacon)
+        if (beacons.size >= ITEMS_LIMIT) beacons.removeLast()
 
         beacons.addFirst(beacon)
+
         notifyDataSetChanged()
     }
 
