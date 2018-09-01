@@ -4,11 +4,8 @@
              android:layout_height="match_parent"
              tools:context="ciandt.com.navigation.view.history.HistoryFragment">
 
-    <TextView
-        android:layout_margin="@dimen/default_margin2x"
-        style="@style/Base.TextAppearance.AppCompat.Display1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Home"/>
+    <include
+        android:id="@+id/container"
+        layout="@layout/beacon_cardview"/>
 
 </FrameLayout>

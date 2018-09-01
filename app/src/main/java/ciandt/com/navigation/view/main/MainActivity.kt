@@ -61,8 +61,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var region23B: BeaconRegion
     private lateinit var regionMall: BeaconRegion
 
-    private var homeTxt: String = ""
-
     private val onPageChangeListener = object : ViewPager.OnPageChangeListener {
         override fun onPageScrollStateChanged(state: Int) {}
 
@@ -97,7 +95,7 @@ class MainActivity : AppCompatActivity() {
         beaconManager.setForegroundScanPeriod(SCAN_PERIOD, SCAN_INTERVAL)
         beaconManager.setRangingListener(BeaconManager.BeaconRangingListener { region, list ->
             for (beacon in list) {
-                val nearestBeacon = list[0]
+                val nearestBeacon = placesNearBeacon(list[0])
                 val places = placesNearBeacon(beacon)
 
                 adapter.updateFragments(region, nearestBeacon, places)
