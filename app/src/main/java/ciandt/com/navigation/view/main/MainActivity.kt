@@ -6,15 +6,10 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.MenuItem
-import android.widget.Toast
 import ciandt.com.navigation.R
-import ciandt.com.navigation.view.history.BeaconAdapter
 import com.crashlytics.android.Crashlytics
 import com.estimote.coresdk.common.requirements.SystemRequirementsChecker
 import com.estimote.coresdk.observation.region.beacon.BeaconRegion
@@ -22,12 +17,8 @@ import com.estimote.coresdk.recognition.packets.Beacon
 import com.estimote.coresdk.service.BeaconManager
 import io.fabric.sdk.android.Fabric
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.main_beacon_rv.*
 import timber.log.Timber
 import java.util.*
-
-
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -72,71 +63,62 @@ class MainActivity : AppCompatActivity() {
 
     private var homeTxt: String = ""
 
-    private val beaconAdapter by lazy {
-        BeaconAdapter(this, emptyview) { beacon ->
-            Toast.makeText(applicationContext, "$beacon", Toast.LENGTH_SHORT).show()
-        }
-    }
+    private val onPageChangeListener = object : ViewPager.OnPageChangeListener {
+        override fun onPageScrollStateChanged(state: Int) {}
 
-    private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        when (item.itemId) {
-            R.id.navigation_home -> {
-                return@OnNavigationItemSelectedListener true
-            }
-            R.id.navigation_history -> {
-                return@OnNavigationItemSelectedListener true
-            }
-            R.id.navigation_directions -> {
-                return@OnNavigationItemSelectedListener true
+        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+
+        override fun onPageSelected(position: Int) {
+            val currentItemId = navigation.menu.getItem(position).itemId
+            if (currentItemId != navigation.selectedItemId) {
+                navigation.menu.getItem(position).isChecked = true
+                navigation.menu.findItem(navigation.selectedItemId).isChecked = false
             }
         }
-        false
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+
         Fabric.with(this, Crashlytics())
 
-        recyclerViewBeacons.layoutManager = LinearLayoutManager(this)
-        recyclerViewBeacons.adapter = beaconAdapter
-        beaconManager = BeaconManager(this)
-        // Scan period and interval
-        beaconManager.setForegroundScanPeriod(SCAN_PERIOD, SCAN_INTERVAL)
+        navigation.setOnNavigationItemSelectedListener { menuItem ->
+            selectMenuItem(menuItem)
+        }
 
+        val adapter = MainFragmentPagaAdapter(supportFragmentManager, applicationContext)
+
+        viewPager.addOnPageChangeListener(onPageChangeListener)
+        viewPager.adapter = adapter
+
+        beaconManager = BeaconManager(this)
+        beaconManager.setForegroundScanPeriod(SCAN_PERIOD, SCAN_INTERVAL)
         beaconManager.setRangingListener(BeaconManager.BeaconRangingListener { region, list ->
             for (beacon in list) {
                 val nearestBeacon = list[0]
-                val places = placesNearBeacon(nearestBeacon)
+                val places = placesNearBeacon(beacon)
 
-                Timber.d(nearestBeacon.toString())
+                adapter.updateFragments(region, nearestBeacon, places)
 
-                val txt = "Região: " + region.identifier + " " + places.toString()
-
-                homeTxt = txt
-                /*showNotification("Navigation", txt)*/
-                Timber.d(homeTxt)
-
-                /*textViewRegion.text = region.identifier
-                textViewPlace.text = places?.get(0) ?: "Beacon not found"
-                textViewDescription.text = "Lorem ipsum"*/
-
-                beaconAdapter.insert(ciandt.com.navigation.model.Beacon(
-                        region.identifier,
-                        places?.get(0) ?: "Beacon not found",
-                        places?.toString() ?: "Beacon not found"
-                ))
-
-//                viewPager.addOnPageChangeListener(onPageChangeListener)
-
+                Timber.d(beacon.toString())
             }
         })
 
-        region23B = BeaconRegion(IDENTIFIER_23B,
-                UUID.fromString(UUID_23B), null, null)
-        regionMall = BeaconRegion(IDENTIFIER_MALL,
-                UUID.fromString(UUID_MALL), null, null)
+        region23B = BeaconRegion(IDENTIFIER_23B, UUID.fromString(UUID_23B), null, null)
+        regionMall = BeaconRegion(IDENTIFIER_MALL, UUID.fromString(UUID_MALL), null, null)
+    }
+
+    private fun selectMenuItem(menuItem: MenuItem): Boolean {
+        when (menuItem.itemId) {
+            R.id.navigation_home -> viewPager.currentItem = 0
+            R.id.navigation_history -> viewPager.currentItem = 1
+            R.id.navigation_directions -> viewPager.currentItem = 2
+            else -> viewPager.currentItem = 0
+        }
+
+        return true;
     }
 
     override fun onResume() {
@@ -157,7 +139,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun placesNearBeacon(beacon: Beacon): List<String>? {
-        Log.d("DEBUG BEACON: ", beacon.toString())
+        Timber.d(beacon.toString())
 
         val placesByBeacons = hashMapPlaces()
         val beaconKey = String.format("%d:%d", beacon.major, beacon.minor)
@@ -227,8 +209,8 @@ class MainActivity : AppCompatActivity() {
                 DOUBLE_DOT +
                 BEACON_MINOR_23B_TEST] = object : ArrayList<String>() {
             init {
-                add("Projeto Honda Honda Honda Honda Honda ")
-                add("Descrição de teste")
+                add("Projeto Honda")
+                add("Descriçao Teste")
             }
         }
         // 23B Mall

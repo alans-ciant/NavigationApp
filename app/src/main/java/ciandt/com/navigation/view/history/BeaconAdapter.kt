@@ -22,7 +22,7 @@ class BeaconAdapter(
 ) : RecyclerView.Adapter<BeaconAdapter.ViewHolder>() {
 
     companion object {
-        const val ITEMS_LIMIT = 5 // Firebase
+        const val ITEMS_LIMIT = 5 // TODO Firebase
     }
 
     private val beacons = LinkedList<Beacon>()

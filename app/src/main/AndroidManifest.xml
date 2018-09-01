@@ -33,11 +33,11 @@
 
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="API-KEY"/>
+            android:value="b91382d6613ffb92289d66e4e5b5f75f0273fd5a"/>
 
-        <meta-data
-            android:name="force_old_scanning_api"
-            android:value="true"/>
+        <!--<meta-data-->
+            <!--android:name="force_old_scanning_api"-->
+            <!--android:value="true"/>-->
 
     </application>
 
