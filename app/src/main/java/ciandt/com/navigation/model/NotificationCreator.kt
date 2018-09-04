@@ -9,7 +9,7 @@ import android.os.Build
 import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
 import ciandt.com.navigation.R
-import ciandt.com.navigation.view.MainActivity
+import ciandt.com.navigation.view.main.MainActivity
 
 /**
  * Created by alans on 13/03/18.

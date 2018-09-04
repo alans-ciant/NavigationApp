@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="no_beacon_available">Nenhum beacon disponível</string>
+
+    <string name="labelRegion">Região:</string>
+    <string name="labelPlace">Localização:</string>
+    <string name="labelDescription">Descrição:</string>
+</resources>

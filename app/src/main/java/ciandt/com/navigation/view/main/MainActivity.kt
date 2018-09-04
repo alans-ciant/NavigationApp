@@ -1,4 +1,4 @@
-package ciandt.com.navigation.view
+package ciandt.com.navigation.view.main
 
 import android.app.Notification
 import android.app.NotificationManager
@@ -6,18 +6,19 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
+import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
-import android.widget.Toast
+import android.view.MenuItem
 import ciandt.com.navigation.R
+import com.crashlytics.android.Crashlytics
 import com.estimote.coresdk.common.requirements.SystemRequirementsChecker
 import com.estimote.coresdk.observation.region.beacon.BeaconRegion
 import com.estimote.coresdk.recognition.packets.Beacon
 import com.estimote.coresdk.service.BeaconManager
+import io.fabric.sdk.android.Fabric
 import kotlinx.android.synthetic.main.activity_main.*
+import timber.log.Timber
 import java.util.*
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,6 +46,9 @@ class MainActivity : AppCompatActivity() {
     // Human Resources
     private var BEACON_MAJOR_23B_HUMAN_RESOURCES = 64386
     private var BEACON_MINOR_23B_HUMAN_RESOURCES = 39261
+    // Test
+    private var BEACON_MAJOR_23B_TEST = 11111
+    private var BEACON_MINOR_23B_TEST = 7777
 
     // MALL
     private val IDENTIFIER_MALL = "alameda Ci&T"
@@ -60,37 +64,26 @@ class MainActivity : AppCompatActivity() {
     private lateinit var region23B: BeaconRegion
     private lateinit var regionMall: BeaconRegion
 
-    private var homeTxt: String = ""
+    private val onPageChangeListener = object : ViewPager.OnPageChangeListener {
+        override fun onPageScrollStateChanged(state: Int) {}
 
-    private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        when (item.itemId) {
-            R.id.navigation_home -> {
-                //message.setText(R.string.title_home)
+        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
-                return@OnNavigationItemSelectedListener true
-            }
-            R.id.navigation_history -> {
-                //message.setText(R.string.title_history)
-
-                return@OnNavigationItemSelectedListener true
-            }
-            R.id.navigation_directions -> {
-                //message.setText(R.string.title_directions)
-
-                return@OnNavigationItemSelectedListener true
+        override fun onPageSelected(position: Int) {
+            val currentItemId = navigation.menu.getItem(position).itemId
+            if (currentItemId != navigation.selectedItemId) {
+                navigation.menu.getItem(position).isChecked = true
+                navigation.menu.findItem(navigation.selectedItemId).isChecked = false
             }
         }
-        false
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
-        beaconManager = BeaconManager(this)
-        // Scan period and interval
-        beaconManager.setBackgroundScanPeriod(SCAN_PERIOD, SCAN_INTERVAL)
+        Fabric.with(this, Crashlytics())
 
         beaconManager.setRangingListener(BeaconManager.BeaconRangingListener { region, list ->
             if (!list.isEmpty()) {
@@ -107,20 +100,48 @@ class MainActivity : AppCompatActivity() {
                     showNotification("Navigation", txt)
                     Log.d("DEBUG RANGING: ", homeTxt)
                 }
+        navigation.setOnNavigationItemSelectedListener { menuItem ->
+            selectMenuItem(menuItem)
+        }
+
+        val adapter = MainFragmentPagaAdapter(supportFragmentManager, applicationContext)
+
+        viewPager.addOnPageChangeListener(onPageChangeListener)
+        viewPager.adapter = adapter
+
+        beaconManager = BeaconManager(this)
+        beaconManager.setForegroundScanPeriod(SCAN_PERIOD, SCAN_INTERVAL)
+        beaconManager.setRangingListener(BeaconManager.BeaconRangingListener { region, list ->
+            for (beacon in list) {
+                val nearestBeacon = placesNearBeacon(list[0])
+                val places = placesNearBeacon(beacon)
+
+                adapter.updateFragments(region, nearestBeacon, places)
+
+                Timber.d(beacon.toString())
             }
         })
 
-        region23B = BeaconRegion(IDENTIFIER_23B,
-                UUID.fromString(UUID_23B), null, null)
-        regionMall = BeaconRegion(IDENTIFIER_MALL,
-                UUID.fromString(UUID_MALL), null, null)
+        region23B = BeaconRegion(IDENTIFIER_23B, UUID.fromString(UUID_23B), null, null)
+        regionMall = BeaconRegion(IDENTIFIER_MALL, UUID.fromString(UUID_MALL), null, null)
+    }
+
+    private fun selectMenuItem(menuItem: MenuItem): Boolean {
+        when (menuItem.itemId) {
+            R.id.navigation_home -> viewPager.currentItem = 0
+            R.id.navigation_history -> viewPager.currentItem = 1
+            R.id.navigation_directions -> viewPager.currentItem = 2
+            else -> viewPager.currentItem = 0
+        }
+
+        return true;
     }
 
     override fun onResume() {
         super.onResume()
 
         SystemRequirementsChecker.checkWithDefaultDialogs(this)
-        beaconManager.connect(BeaconManager.ServiceReadyCallback {
+        beaconManager.connect({
             beaconManager.startRanging(region23B)
             beaconManager.startRanging(regionMall)
         })
@@ -134,9 +155,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun placesNearBeacon(beacon: Beacon): List<String>? {
-        Log.d("DEBUG BEACON: ", beacon.toString())
+        Timber.d(beacon.toString())
 
-        var placesByBeacons = hashMapPlaces()
+        val placesByBeacons = hashMapPlaces()
         val beaconKey = String.format("%d:%d", beacon.major, beacon.minor)
 
         return if (placesByBeacons.containsKey(beaconKey)) {
@@ -145,7 +166,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun hashMapPlaces(): HashMap<String, List<String>> {
-        var placesByBeacons = HashMap<String, List<String>>()
+        val placesByBeacons = HashMap<String, List<String>>()
 
         // 23B Reception
         placesByBeacons[BEACON_MAJOR_23B_RECEPTION.toString() +
@@ -206,6 +227,15 @@ class MainActivity : AppCompatActivity() {
                 add("Administrativo")
                 add("Quitanda Geek")
                 add("Cozinha")
+            }
+        }
+        // TEST
+        placesByBeacons[BEACON_MAJOR_23B_TEST.toString() +
+                DOUBLE_DOT +
+                BEACON_MINOR_23B_TEST] = object : ArrayList<String>() {
+            init {
+                add("Projeto Honda")
+                add("Descriçao Teste")
             }
         }
         // 23B Mall
